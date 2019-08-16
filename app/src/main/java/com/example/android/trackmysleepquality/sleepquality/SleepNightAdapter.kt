@@ -1,33 +1,19 @@
 package com.example.android.trackmysleepquality.sleepquality
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 
-class SleepNightAdapter: RecyclerView.Adapter<SleepNightAdapter.ViewHolder>(){
-
-    var data = listOf<SleepNight>()
-
-    // Updates view holder data, currently it does so globally. Later, a more efficient mehtod will
-    //be employed
-    set(value){
-        field = value //Sets the data the recycler view cares about
-        notifyDataSetChanged() //Tells the recycler view of updates
-    }
-
-    /**
-     * Returns the number of items in [RecyclerView]
-     * @return size The amount of [ViewHolder]s in [RecyclerView]
-     */
-    override fun getItemCount() = data.size //Amount in recycler view
+class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()){
 
     /**
      * Performs view recycling. Old views that disappear from screen get updated data
@@ -40,7 +26,7 @@ class SleepNightAdapter: RecyclerView.Adapter<SleepNightAdapter.ViewHolder>(){
      * managed
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int){
-        val item = data[position] //Position view is in
+        val item = getItem(position) //Position view is in, now provided by ListAdapter
         holder.bind(item)
     }
 
@@ -101,5 +87,35 @@ class SleepNightAdapter: RecyclerView.Adapter<SleepNightAdapter.ViewHolder>(){
         }
     }
 
+    class SleepNightDiffCallback: DiffUtil.ItemCallback<SleepNight>(){
+        /**
+         * Called to check whether two items have the same data.
+         *
+         * This information is used to detect if the contents of an item have changed.
+         *
+         * @param oldItem The item in the old list.
+         * @param newItem The item in the new list.
+         * @return True if the contents of the items are the same or false if they are different.
+         *
+         * @see Callback.areContentsTheSame
+         */
+        override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            return oldItem == newItem
+        }
+
+        /**
+         * Called to check whether two objects represent the same item.
+         *
+         * @param oldItem The item in the old list.
+         * @param newItem The item in the new list.
+         * @return True if the two items represent the same object or false if they are different.
+         *
+         * @see Callback.areItemsTheSame
+         */
+        override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            return oldItem.nightId == newItem.nightId
+        }
+
+    }
 
 }
