@@ -18,8 +18,7 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
      * Performs view recycling. Old views that disappear from screen get updated data
      * and are introduced where needed.
      *
-     * @param holder Contains SleepNight data, although currently it's a stub containing only the
-     * sleep quality
+     * @param holder Contains [SleepNight] data
      *
      * @param position The position of the item in the list, used to determine how the view will be
      * managed
@@ -35,7 +34,7 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
      * @param parent The [ViewGroup] where the [ViewHolder] is hosted
      *
      * @param viewType Determines the kind of [ViewHolder] to use (in the case where a list contains
-     * different types of ViewHolders, in this implementation all are the same)
+     * different types of [ViewHolder]s, in this implementation all are the same)
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -52,17 +51,8 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
          * @param item [SleepNight] item to be displayed
          */
         fun bind(item: SleepNight) {
-            binding.sleepLength.text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, itemView.context.resources)
-            binding.qualityString.text = convertNumericQualityToString(item.sleepQuality, itemView.context.resources)
-            binding.qualityImage.setImageResource(when (item.sleepQuality) {
-                0 -> R.drawable.ic_sleep_0
-                1 -> R.drawable.ic_sleep_1
-                2 -> R.drawable.ic_sleep_2
-                3 -> R.drawable.ic_sleep_3
-                4 -> R.drawable.ic_sleep_4
-                5 -> R.drawable.ic_sleep_5
-                else -> R.drawable.ic_sleep_active
-            })
+            binding.sleep = item
+            binding.executePendingBindings()
         }
 
         /**
