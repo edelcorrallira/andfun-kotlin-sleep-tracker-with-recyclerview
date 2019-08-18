@@ -46,7 +46,7 @@ class SleepTrackerViewModel(
      *
      * By default, all coroutines started in uiScope will launch in [Dispatchers.Main] which is
      * the main thread on Android. This is a sensible default because most coroutines started by
-     * a [ViewModel] update the UI after performing some processing.
+     * a ViewModel update the UI after performing some processing.
      */
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -96,7 +96,7 @@ class SleepTrackerViewModel(
         get() = _showSnackbarEvent
 
     /**
-     * Variable that tells the Fragment to navigate to a specific [SleepQualityFragment]
+     * Variable that tells the Fragment to navigate to [SleepQualityFragment]
      *
      * This is private because we don't want to expose setting this value to the Fragment.
      */
@@ -155,18 +155,28 @@ class SleepTrackerViewModel(
         }
     }
 
+    /**
+     * Discards all [SleepNight] data on database.
+     */
     private suspend fun clear() {
         withContext(Dispatchers.IO) {
             database.clear()
         }
     }
 
+    /**
+     * Used to update the values of [SleepNight] records. Specifically, its purpose is recording
+     * sleep quality.
+     */
     private suspend fun update(night: SleepNight) {
         withContext(Dispatchers.IO) {
             database.update(night)
         }
     }
 
+    /**
+     * Insert new [SleepNight] records into the database.
+     */
     private suspend fun insert(night: SleepNight) {
         withContext(Dispatchers.IO) {
             database.insert(night)
@@ -234,5 +244,21 @@ class SleepTrackerViewModel(
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+    }
+
+    //Detail view navigation event property and getter
+    private val _navigateToSleepDataQuality = MutableLiveData<Long>()
+    val navigateToSleepDataQuality
+        get() = _navigateToSleepDataQuality
+
+    /**
+     * Navigation method used to access [SleepNight] detail view.
+     */
+    fun onSleepNightClicked(id: Long){
+        _navigateToSleepDataQuality.value = id
+    }
+
+    fun onSleepDataQualityNavigated() {
+        _navigateToSleepDataQuality.value = null
     }
 }

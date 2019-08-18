@@ -30,6 +30,7 @@ import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
 import com.example.android.trackmysleepquality.sleepquality.SleepNightAdapter
+import com.example.android.trackmysleepquality.sleepquality.SleepNightListener
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -63,8 +64,20 @@ class SleepTrackerFragment : Fragment() {
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
         //This tells the RecyclerView to use our adapter
-        val adapter = SleepNightAdapter()
+        val adapter = SleepNightAdapter(SleepNightListener {
+            nightId -> sleepTrackerViewModel.onSleepNightClicked(nightId)
+        })
         binding.sleepList.adapter = adapter
+
+        sleepTrackerViewModel.navigateToSleepDataQuality.observe(this, Observer {night ->
+            night?.let{
+                this.findNavController().navigate(
+                        SleepTrackerFragmentDirections
+                                .actionSleepTrackerFragmentToSleepDetailFragment(night))
+                sleepTrackerViewModel.onSleepDataQualityNavigated()
+            }
+        })
+
 
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {

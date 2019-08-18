@@ -6,13 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.trackmysleepquality.R
-import com.example.android.trackmysleepquality.convertDurationToFormatted
-import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
-class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()){
+class SleepNightAdapter(val clickListener: SleepNightListener): ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()){
 
     /**
      * Performs view recycling. Old views that disappear from screen get updated data
@@ -24,7 +21,7 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
      * managed
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int){
-        holder.bind(getItem(position))
+        holder.bind(getItem(position)!!, clickListener)
     }
 
 
@@ -50,8 +47,9 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
          *
          * @param item [SleepNight] item to be displayed
          */
-        fun bind(item: SleepNight) {
+        fun bind(item: SleepNight, clickListener: SleepNightListener) {
             binding.sleep = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
 
@@ -101,3 +99,8 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
     }
 
 }
+
+class SleepNightListener(val clickListener: (sleepId: Long) -> Unit){
+    fun onClick(night: SleepNight) = clickListener(night.nightId)
+}
+
