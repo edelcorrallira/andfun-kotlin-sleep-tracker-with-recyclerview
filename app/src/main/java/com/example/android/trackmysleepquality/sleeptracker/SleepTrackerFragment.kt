@@ -91,6 +91,21 @@ class SleepTrackerFragment : Fragment() {
         // Adding grid manager for SleepNight previews; done manually so that spans can be added
         // easier later in lesson, but could be done in XML on other projects.
         val manager = GridLayoutManager(activity, 3)
+        //We are going to tell the manager how to manage the spans manually
+        //to do this, we create an object
+        manager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup(){
+            /**
+             * Returns the number of span occupied by the item at `position`.
+             *
+             * @param position The adapter position of the item
+             * @return The number of spans occupied by the item at the provided position
+             */
+            override fun getSpanSize(position: Int)= when(position) {
+                0 -> 3
+                else -> 1
+            }
+
+        }
         // We tell the recycler view to use GridLayout Manager; the recycler view is in the binding
         // object
         binding.sleepList.layoutManager = manager
