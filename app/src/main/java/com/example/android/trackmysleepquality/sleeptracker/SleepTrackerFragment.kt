@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
@@ -52,10 +53,11 @@ class SleepTrackerFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
 
+        //Create an instance of the ViewModel associated with this fragment
         val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
-
         val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
 
+        // Ge a reference to the ViewModel associated with this fragment
         val sleepTrackerViewModel =
                 ViewModelProviders.of(
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
@@ -70,7 +72,15 @@ class SleepTrackerFragment : Fragment() {
             }
         })
 
+        // We give the binding object a reference to the ViewModel so we can perform data binding
         binding.sleepTrackerViewModel = sleepTrackerViewModel
+
+        // Adding grid manager for SleepNight previews; done manually so that spans can be added
+        // easier later in lesson, but could be done in XML on other projects.
+        val manager = GridLayoutManager(activity, 3)
+        // We tell the recycler view to use GridLayout Manager; the recycler view is in the binding
+        // object
+        binding.sleepList.layoutManager = manager
 
         binding.setLifecycleOwner(this)
 
